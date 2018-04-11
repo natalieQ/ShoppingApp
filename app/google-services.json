@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "979074737025-tcmmqtkl1fv005dahoi7am7mascgqvtv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nailiqi.shoppingapp",
+            "certificate_hash": "e766a8c277a3c7767c208cab7cfd3583d2f3e664"
+          }
+        },
+        {
           "client_id": "979074737025-31r3tlqfhojkgupnd0m0bvaemefe982i.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "979074737025-31r3tlqfhojkgupnd0m0bvaemefe982i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
