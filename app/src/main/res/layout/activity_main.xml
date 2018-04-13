@@ -1,18 +1,212 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <!--input-->
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:id="@+id/relLayout1"
+        android:background="@drawable/grey_border_bottom"
+        android:padding="10dp">
 
-</android.support.constraint.ConstraintLayout>
+        <!--intro-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relLayout2">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvInstruction1"
+                android:text="Please enter the product you want to add."
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginLeft="2dp"/>
+
+        </RelativeLayout>
+
+        <!--add new product-->
+        <RelativeLayout
+            android:id="@+id/relLayout3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/relLayout2"
+            android:layout_marginTop="4dp">
+
+            <EditText
+                android:id="@+id/etProductName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Product Name"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/etPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/etProductName"
+                android:hint="Price"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/etPriority"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/etPrice"
+                android:hint="Priority"
+                android:textSize="14sp" />
+            <Button
+                android:id="@+id/btnAdd"
+                android:layout_width="108dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="57dp"
+                android:layout_toRightOf="@id/etPriority"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/blue_border"
+                android:text="Add Product"
+                android:textColor="@color/babyblue"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+    <!--save or retrieve file-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relLayout5"
+        android:layout_below="@id/relLayout1"
+        android:background="@drawable/grey_border_bottom"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvInstruction2"
+            android:text="Would you like to retrieve existing shopping list?"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="2dp"/>
+
+        <Button
+            android:id="@+id/btnRetrieve"
+            android:layout_width="164dp"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/tvInstruction2"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/blue_border"
+            android:text="Retrieve shopping list"
+            android:textColor="@color/babyblue"
+            android:textSize="12sp" />
+
+    </RelativeLayout>
+
+    <!--Go shopping-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relLayout6"
+        android:layout_below="@id/relLayout5"
+        android:background="@drawable/grey_border_bottom"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvInstruction3"
+            android:text="Now let's go shopping!"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="2dp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvInstruction3"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/btnShopping"
+                android:layout_width="107dp"
+                android:layout_height="30dp"
+                android:layout_alignParentLeft="true"
+
+                android:background="@drawable/pink_border"
+                android:text="go shopping!!!"
+                android:textColor="@color/colorAccent"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btnClear"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="122dp"
+                android:background="@drawable/pink_border"
+                android:text="Restart"
+                android:textColor="@color/colorAccent"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="139dp"
+                android:layout_height="30dp"
+
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="0dp"
+                android:background="@drawable/blue_border"
+                android:text="Save shopping list"
+                android:textColor="@color/babyblue"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+
+    <!--listview for shopping list-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relLayout4"
+        android:layout_below="@+id/relLayout6"
+        android:padding="10dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvInstruction4"
+            android:text="MY SHOPPING LIST"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:layout_marginLeft="2dp"/>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvInstruction4">
+
+        </ListView>
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
