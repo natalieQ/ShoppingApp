@@ -8,26 +8,26 @@
 
     <!--input-->
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/relLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
         android:background="@drawable/grey_border_bottom"
         android:padding="10dp">
 
         <!--intro-->
         <RelativeLayout
+            android:id="@+id/relLayout2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/relLayout2">
+            android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/tvInstruction1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvInstruction1"
+                android:layout_marginLeft="2dp"
                 android:text="Please enter the product you want to add."
-                android:textSize="14sp"
                 android:textColor="@color/black"
-                android:layout_marginLeft="2dp"/>
+                android:textSize="14sp" />
 
         </RelativeLayout>
 
@@ -63,14 +63,15 @@
                 android:layout_toRightOf="@+id/etPrice"
                 android:hint="Priority"
                 android:textSize="14sp" />
+
             <Button
                 android:id="@+id/btnAdd"
                 android:layout_width="108dp"
                 android:layout_height="30dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginLeft="57dp"
-                android:layout_toRightOf="@id/etPriority"
                 android:layout_marginTop="5dp"
+                android:layout_toRightOf="@id/etPriority"
                 android:background="@drawable/blue_border"
                 android:text="Add Product"
                 android:textColor="@color/babyblue"
@@ -126,16 +127,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tvInstruction3"
-            android:text="Now let's go shopping!"
+            android:text="Please enter your BUDGET before shopping."
             android:textSize="14sp"
             android:textColor="@color/black"
             android:layout_marginLeft="2dp"/>
 
+        <EditText
+            android:id="@+id/etBudget"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvInstruction3"
+            android:hint="Budget"
+            android:textSize="14sp" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvInstruction3"
-            android:layout_marginTop="8dp">
+            android:layout_below="@id/etBudget">
 
             <Button
                 android:id="@+id/btnShopping"

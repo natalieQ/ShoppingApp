@@ -6,9 +6,14 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.nailiqi.shoppingapp.Models.Product;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,6 +23,13 @@ public class MainActivity extends AppCompatActivity {
     //firebase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    //widgets
+    EditText productname, price, priority, budget;
+    Button addProduct, retrieveFile, goShopping, restart, saveFile;
+
+    //vars
+    List<Product> productList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
