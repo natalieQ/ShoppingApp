@@ -213,15 +213,15 @@
             android:weightSum="100">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Product Name"
                 android:textSize="12sp"
-                android:layout_weight="40"
+                android:layout_weight="37"
                 android:textColor="@color/black"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Price"
                 android:textSize="12sp"
@@ -229,7 +229,7 @@
                 android:textColor="@color/black"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Priority"
                 android:textSize="12sp"
@@ -237,7 +237,7 @@
                 android:textColor="@color/black"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Qty"
                 android:textSize="12sp"
@@ -245,11 +245,11 @@
                 android:textColor="@color/black"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Purchased"
                 android:textSize="12sp"
-                android:layout_weight="15"
+                android:layout_weight="18"
                 android:textColor="@color/black"/>
 
         </LinearLayout>
