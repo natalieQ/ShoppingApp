@@ -3,6 +3,9 @@ package com.nailiqi.shoppingapp.Utils;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +20,14 @@ import com.nailiqi.shoppingapp.R;
 import java.util.List;
 
 /**
- * User can edit product name, price, priority for shopping request list (before going shopping)
+ * User can edit product price, priority for shopping request list (before going shopping)
  * However user can not edit product quantity for shopping request
  * User would be able to edit quantity after shopping is made
  */
 
 public class ShoppingRequestListAdapter extends ArrayAdapter<Product> {
 
-    private static final String TAG = "ShoppingRequestListAdapter";
+    private static final String TAG = "ListAdapter";
 
     private LayoutInflater mInflater;
     private int mLayoutResource;
@@ -42,9 +45,12 @@ public class ShoppingRequestListAdapter extends ArrayAdapter<Product> {
     }
 
     static class ViewHolder{
-        EditText mProductname, mPrice, mPriority, mQty;
-        TextView mPurchased;
+        EditText mPrice, mPriority, mQty;
+        TextView mProductname, mPurchased;
+        //to record postion for edit text
+        int ref;
     }
+
 
 
     @NonNull
@@ -56,7 +62,7 @@ public class ShoppingRequestListAdapter extends ArrayAdapter<Product> {
             convertView = mInflater.inflate(mLayoutResource, parent, false);
             holder = new ShoppingRequestListAdapter.ViewHolder();
 
-            holder.mProductname = (EditText) convertView.findViewById(R.id.etProductName);
+            holder.mProductname = (TextView) convertView.findViewById(R.id.tvProductName);
             holder.mPrice = (EditText) convertView.findViewById(R.id.etPrice);
             holder.mPriority = (EditText) convertView.findViewById(R.id.etPriority);
             holder.mQty = (EditText) convertView.findViewById(R.id.etQty);
@@ -74,44 +80,29 @@ public class ShoppingRequestListAdapter extends ArrayAdapter<Product> {
         holder.mQty.setText(String.valueOf(getItem(position).getQty()));
         holder.mPurchased.setText(String.valueOf(getItem(position).isPurchased()));
 
-        //update productList after editing - product name
-        holder.mProductname.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus){
-                    final int position = v.getId();
-                    final EditText productname = (EditText) v;
-                    productList.get(position).setName(productname.getText().toString());
-                    Product newProduct = productList.get(position);
+        holder.ref = position;
 
-                    //if product already existed, overwrite its price and priority
-                    for(Product product : productList) {
-                        if(product.getName().equals(newProduct.getName())) {
-                            productList.remove(product);
-                            break;
-                        }
-                    }
-                    productList.add(newProduct);
-                }
-            }
-        });
 
         //update productList after editing - price
         holder.mPrice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus){
-                    final int position = v.getId();
-                    final EditText price = (EditText) v;
+
+                    final EditText field = (EditText) v;
+                    String value = field.getText().toString();
+                    Log.d(TAG, "onFocusChange: position " + holder.ref);
+
                     try {
-                        double newPrice = Double.parseDouble(price.getText().toString());
+                        double newPrice = Double.parseDouble(value);
 
                         if(newPrice <= 0) {
-                            Toast.makeText(mContext, "Price can't be negative or zero",
+                            Toast.makeText(mContext, "Price can't be negative or zero.",
                                     Toast.LENGTH_SHORT).show();
+                        } else {
+                            productList.get(holder.ref).setPrice(newPrice);
                         }
 
-                        productList.get(position).setPrice(newPrice);
                     } catch (Exception ex) {
                         Toast.makeText(mContext, "InValid input",
                                 Toast.LENGTH_SHORT).show();
@@ -121,21 +112,25 @@ public class ShoppingRequestListAdapter extends ArrayAdapter<Product> {
         });
 
         //update productList after editing - priority
-        holder.mPrice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        holder.mPriority.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus){
-                    final int position = v.getId();
-                    final EditText priority = (EditText) v;
+
+                    final EditText field = (EditText) v;
+                    String value = field.getText().toString();
+                    Log.d(TAG, "onFocusChange: position " + holder.ref);
+
                     try {
-                        int newPriority = Integer.parseInt(priority.getText().toString());
+                        int newPriority = Integer.parseInt(value);
 
                         if(newPriority < 1) {
                             Toast.makeText(mContext, "Priority can't be smaller than 1.",
                                     Toast.LENGTH_SHORT).show();
+                        } else {
+                            productList.get(holder.ref).setPriority(newPriority);
                         }
 
-                        productList.get(position).setPriority(newPriority);
                     } catch (Exception ex) {
                         Toast.makeText(mContext, "InValid input",
                                 Toast.LENGTH_SHORT).show();
@@ -144,17 +139,9 @@ public class ShoppingRequestListAdapter extends ArrayAdapter<Product> {
             }
         });
 
-        //update productList after editing - Qty
-        holder.mPrice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus){
-                    Toast.makeText(mContext, "You cannot change Qty before shopping. You can change it after going shopping",
-                            Toast.LENGTH_SHORT).show();
-                    holder.mQty.setText("0");
-                }
-            }
-        });
+
+
+
 
         return convertView;
     }

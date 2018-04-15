@@ -12,17 +12,17 @@
         android:layout_marginTop="5dp"
         android:weightSum="100">
 
-        <EditText
-            android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/etProductName"
+            android:id="@+id/tvProductName"
             android:textSize="12sp"
             android:layout_weight="40"
             android:textColor="@color/black"
             android:background="@null"/>
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/etPrice"
             android:textSize="12sp"
@@ -31,7 +31,7 @@
             android:background="@null"/>
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/etPriority"
             android:textSize="12sp"
@@ -40,7 +40,7 @@
             android:background="@null"/>
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/etQty"
             android:textSize="12sp"
@@ -49,7 +49,7 @@
             android:background="@null"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/tvPurchased"
             android:textSize="12sp"

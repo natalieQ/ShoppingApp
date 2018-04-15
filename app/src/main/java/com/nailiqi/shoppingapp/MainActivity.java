@@ -149,6 +149,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //startover button
+        btnRestart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBudget.setText(null);
+                refreshProductField();
+
+                requestList.clear();
+                resultList.clear();
+                products.clear();
+                mListview.setAdapter(requestAdapter);
+            }
+        });
     }
 
     /**
