@@ -21,7 +21,9 @@ public class Budget {
     }
 
     //method to generate result list based on budget
-    public List<Product> getResultList(double budget, TreeMap<Integer, List<Product>> products) {
+    public List<Product> getResultList(double budget, TreeMap<Integer, List<Product>> products, List<Product> requestList) {
+
+        addToProducts(products, requestList);
 
         List<Product> resultList = new ArrayList<>();
         for(List<Product> list : products.values()) {
@@ -39,5 +41,15 @@ public class Budget {
             }
         }
         return resultList;
+    }
+
+    private void addToProducts(TreeMap<Integer, List<Product>> products, List<Product> requestList){
+        for(Product product: requestList){
+            if(!products.containsKey(product.getPriority())) {
+                products.put(product.getPriority(), new ArrayList<Product>());
+            }
+
+            products.get(product.getPriority()).add(product);
+        }
     }
 }

@@ -9,11 +9,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.nailiqi.shoppingapp.Models.Budget;
 import com.nailiqi.shoppingapp.Models.Product;
+import com.nailiqi.shoppingapp.Utils.ShoppingRequestListAdapter;
+import com.nailiqi.shoppingapp.Utils.ShoppingResultListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +33,18 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     //vars
-    private List<Product> productList;
+    private List<Product> requestList;
+    private List<Product> resultList;
     //internal data structure to sort product by priority
     //product with equal priority will be stored in a list of products
     private TreeMap<Integer, List<Product>> products;
+    private ShoppingRequestListAdapter requestAdapter;
+    private ShoppingResultListAdapter resultAdapter;
 
     //widgets
     private EditText mProductname, mPrice, mPriority, mBudget;
     private Button btnAddProduct, btnRetrieveFile, btnShopping, btnRestart, btnSaveFile;
+    private ListView mListview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,17 +52,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //initialize widgets and vars
-        productList = new ArrayList<>();
+        requestList = new ArrayList<>();
+        resultList = new ArrayList<>();
         products = new TreeMap<>();
 
         mProductname = (EditText) findViewById(R.id.etProductName);
         mPrice = (EditText) findViewById(R.id.etPrice);
         mPriority = (EditText) findViewById(R.id.etPriority);
+        mBudget = (EditText) findViewById(R.id.etBudget);
         btnAddProduct = (Button) findViewById(R.id.btnAdd);
         btnRetrieveFile = (Button) findViewById(R.id.btnRetrieve);
         btnShopping = (Button) findViewById(R.id.btnShopping);
         btnRestart = (Button) findViewById(R.id.btnClear);
         btnSaveFile = (Button) findViewById(R.id.btnSave);
+        mListview = (ListView) findViewById(R.id.listview);
 
         //initialize firebase auth
         setupFirebaseAuth();
@@ -95,9 +106,46 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }catch (Exception ex){
-                    Toast.makeText(context, "InValid input for product, please try again.",
+                    Toast.makeText(context, "InValid input, please try again.",
                             Toast.LENGTH_SHORT).show();
                     refreshProductField();
+                }
+            }
+        });
+
+        //go shopping button
+        btnShopping.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                try {
+                    double budget = Double.parseDouble(mBudget.getText().toString());
+
+                    if(budget <= 0) {
+                        Toast.makeText(context, "Budget can't be less than 0, please try again.",
+                                Toast.LENGTH_SHORT).show();
+                        mBudget.setText(null);
+                    }
+                    else if(requestList.size() == 0) {
+                        Toast.makeText(context, "You have not entered any products to buy yet.",
+                                Toast.LENGTH_SHORT).show();
+                    }else {
+
+                        //generate new result list based on budget
+                        Budget budgetObject = new Budget(budget);
+                        resultList = budgetObject.getResultList(budget, products, requestList);
+
+                        //display result
+                        mBudget.setText(null);
+                        resultAdapter = new ShoppingResultListAdapter(context, R.layout.section_shopping_listview, resultList);
+                        mListview.setAdapter(resultAdapter);
+
+                    }
+
+                }catch (Exception ex){
+                    Toast.makeText(context, "InValid input for budget.",
+                            Toast.LENGTH_SHORT).show();
+                    mBudget.setText(null);
                 }
             }
         });
@@ -108,28 +156,18 @@ public class MainActivity extends AppCompatActivity {
      */
     private void addProductToList(Product newProduct) {
         //if product already existed, overwrite its price and priority
-        for(Product product : productList) {
+        for(Product product : requestList) {
             if(product.getName().equals(newProduct.getName())) {
-                int oldPriority = product.getPriority();
-                productList.remove(product);
-                products.get(oldPriority).remove(product);
-                if(products.get(oldPriority).size() == 0) {
-                    products.remove(oldPriority);
-                }
+                requestList.remove(product);
                 break;
             }
         }
 
-        if(!products.containsKey(newProduct.getPriority())) {
-            products.put(newProduct.getPriority(), new ArrayList<Product>());
-        }
-
-        products.get(newProduct.getPriority()).add(newProduct);
-        productList.add(newProduct);
-
-        refreshProductList();
+        requestList.add(newProduct);
 
         //display shopping list
+        requestAdapter = new ShoppingRequestListAdapter(context, R.layout.section_shopping_listview, requestList);
+        mListview.setAdapter(requestAdapter);
 
     }
 
@@ -146,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
      * utility method to reset product list products qty to 0 and purchase to false
      */
 
-    private void refreshProductList() {
+    private void refreshProductList(List<Product> productList) {
         for(Product product: productList) {
             product.setPurchased(false);
             product.setQty(0);

@@ -24,7 +24,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/etPriceP"
+            android:id="@+id/etPrice"
             android:textSize="12sp"
             android:layout_weight="15"
             android:textColor="@color/black"
@@ -48,10 +48,10 @@
             android:textColor="@color/black"
             android:background="@null"/>
 
-        <EditText
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/etPurchased"
+            android:id="@+id/tvPurchased"
             android:textSize="12sp"
             android:layout_weight="15"
             android:textColor="@color/black"
