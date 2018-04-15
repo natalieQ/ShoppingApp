@@ -14,8 +14,15 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.nailiqi.shoppingapp.Models.Budget;
 import com.nailiqi.shoppingapp.Models.Product;
+import com.nailiqi.shoppingapp.Models.UserShoppingList;
 import com.nailiqi.shoppingapp.Utils.ShoppingRequestListAdapter;
 import com.nailiqi.shoppingapp.Utils.ShoppingResultListAdapter;
 
@@ -34,12 +41,13 @@ public class MainActivity extends AppCompatActivity {
 
     //vars
     private List<Product> requestList;
-    private List<Product> resultList;
     //internal data structure to sort product by priority
     //product with equal priority will be stored in a list of products
     private TreeMap<Integer, List<Product>> products;
     private ShoppingRequestListAdapter requestAdapter;
     private ShoppingResultListAdapter resultAdapter;
+    private String user_shoppingList;
+    private boolean canShop;
 
     //widgets
     private EditText mProductname, mPrice, mPriority, mBudget;
@@ -53,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
         //initialize widgets and vars
         requestList = new ArrayList<>();
-        resultList = new ArrayList<>();
         products = new TreeMap<>();
+        canShop = true;
 
         mProductname = (EditText) findViewById(R.id.etProductName);
         mPrice = (EditText) findViewById(R.id.etPrice);
@@ -82,34 +90,41 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                try {
-                    String productname = mProductname.getText().toString();
-                    double price = Double.parseDouble(mPrice.getText().toString());
-                    int priority = Integer.parseInt(mPriority.getText().toString());
+                if(canShop == true){
+                    try {
+                        String productname = mProductname.getText().toString();
+                        double price = Double.parseDouble(mPrice.getText().toString());
+                        int priority = Integer.parseInt(mPriority.getText().toString());
 
-                    if(price <= 0) {
-                        Toast.makeText(context, "Price can't be negative or zero, please try again.",
+                        if(price <= 0) {
+                            Toast.makeText(context, "Price can't be negative or zero, please try again.",
+                                    Toast.LENGTH_SHORT).show();
+                            refreshProductField();
+                        }
+                        else if(priority < 1) {
+                            Toast.makeText(context, "Priority can't be smaller than 1, please try again.",
+                                    Toast.LENGTH_SHORT).show();
+                            refreshProductField();
+                        }
+                        else {
+                            Product newProduct = new Product(productname,price,priority,0,false);
+                            //add product to request list
+                            addProductToList(newProduct);
+
+                            refreshProductField();
+                        }
+
+                    }catch (Exception ex){
+                        Toast.makeText(context, "InValid input, please try again.",
                                 Toast.LENGTH_SHORT).show();
                         refreshProductField();
                     }
-                    else if(priority < 1) {
-                        Toast.makeText(context, "Priority can't be smaller than 1, please try again.",
-                                Toast.LENGTH_SHORT).show();
-                        refreshProductField();
-                    }
-                    else {
-                        Product newProduct = new Product(productname,price,priority,0,false);
-                        //add product to request list
-                        addProductToList(newProduct);
-
-                        refreshProductField();
-                    }
-
-                }catch (Exception ex){
-                    Toast.makeText(context, "InValid input, please try again.",
+                } else {
+                    Toast.makeText(context, "Please click RESTART button before adding new products",
                             Toast.LENGTH_SHORT).show();
                     refreshProductField();
                 }
+
             }
         });
 
@@ -118,34 +133,40 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                try {
-                    double budget = Double.parseDouble(mBudget.getText().toString());
 
-                    if(budget <= 0) {
-                        Toast.makeText(context, "Budget can't be less than 0, please try again.",
+                if(canShop == true){
+                    try {
+                        double budget = Double.parseDouble(mBudget.getText().toString());
+
+                        if(budget <= 0) {
+                            Toast.makeText(context, "Budget can't be less than 0, please try again.",
+                                    Toast.LENGTH_SHORT).show();
+                            mBudget.setText(null);
+                        }
+                        else if(requestList.size() == 0) {
+                            Toast.makeText(context, "You have not entered any products to buy yet.",
+                                    Toast.LENGTH_SHORT).show();
+                        }else {
+
+                            //generate new result list based on budget
+                            Budget budgetObject = new Budget(budget);
+                            requestList = budgetObject.getResultList(budget, products, requestList);
+
+                            //display result
+                            mBudget.setText(null);
+                            resultAdapter = new ShoppingResultListAdapter(context, R.layout.section_shopping_listview, requestList);
+                            mListview.setAdapter(resultAdapter);
+                            canShop = false;
+                        }
+
+                    }catch (Exception ex){
+                        Toast.makeText(context, "InValid input for budget.",
                                 Toast.LENGTH_SHORT).show();
                         mBudget.setText(null);
                     }
-                    else if(requestList.size() == 0) {
-                        Toast.makeText(context, "You have not entered any products to buy yet.",
-                                Toast.LENGTH_SHORT).show();
-                    }else {
-
-                        //generate new result list based on budget
-                        Budget budgetObject = new Budget(budget);
-                        resultList = budgetObject.getResultList(budget, products, requestList);
-
-                        //display result
-                        mBudget.setText(null);
-                        resultAdapter = new ShoppingResultListAdapter(context, R.layout.section_shopping_listview, resultList);
-                        mListview.setAdapter(resultAdapter);
-
-                    }
-
-                }catch (Exception ex){
-                    Toast.makeText(context, "InValid input for budget.",
+                } else {
+                    Toast.makeText(context, "Please click RESTART button before going shopping again",
                             Toast.LENGTH_SHORT).show();
-                    mBudget.setText(null);
                 }
             }
         });
@@ -158,11 +179,84 @@ public class MainActivity extends AppCompatActivity {
                 refreshProductField();
 
                 requestList.clear();
-                resultList.clear();
                 products.clear();
-                mListview.setAdapter(requestAdapter);
+                mListview.setAdapter(null);
+                canShop = true;
             }
         });
+
+        //retrieve user data from firebase
+        btnRetrieveFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+
+                Query query = myRef.child(getString(R.string.dbname_user_shoppingList))
+                                    .child(mAuth.getCurrentUser().getUid());
+
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        try{
+                            user_shoppingList = dataSnapshot.getValue(UserShoppingList.class)
+                                    .getShoppingList();
+                            //combine with request list
+                            String[] lines = user_shoppingList.split("\\r?\\n");
+                            for(String line: lines){
+                                // Strip by comma, strip extra white spaces
+                                String[] temp = line.split("\\s*,\\s*");
+                                double price = Double.parseDouble(temp[1]);
+                                int priority = Integer.parseInt(temp[2]);
+                                int qty = 0;
+                                boolean purchased = Boolean.parseBoolean(temp[4]);
+                                Product product = new Product(temp[0], price, priority, qty, purchased);
+
+                                //add to existing request list, if product already exists, overwrite
+                                addProductToList(product);
+                                Toast.makeText(context,"Retrieved existing shopping list", Toast.LENGTH_SHORT).show();
+                            }
+                        }catch(Exception ex){
+                            Toast.makeText(context,"No existing shopping list saved on database", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "onDataChange: Exception"+ ex.getMessage() );
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+
+        //save unpurchased products to database
+        btnSaveFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StringBuilder output  = new StringBuilder();
+                for(Product product: requestList){
+                    if(!product.isPurchased()) {
+                        output.append(product.toStringForFile()).append("\n");
+                    }
+                }
+
+                if(output.length() == 0){
+                    Toast.makeText(context,"No unpurchased item to be saved, please try adding more products to shopping list",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+                    myRef.child(getString(R.string.dbname_user_shoppingList))
+                            .child(mAuth.getCurrentUser().getUid())
+                            .child("shoppingList")
+                            .setValue(output.toString());
+
+                    Toast.makeText(context,"Saved unpurchased item to database", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 
     /**

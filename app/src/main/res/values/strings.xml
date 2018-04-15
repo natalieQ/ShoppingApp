@@ -2,8 +2,9 @@
     <string name="app_name">ShoppingApp</string>
 
     <!-- Firebase messages -->
-    <string name="auth_failed">Authenticate Failed</string>
-    <string name="auth_success">Authentication Success</string>
+    <string name="auth_failed">User does not exist</string>
+    <string name="auth_success">Sign in success!</string>
     <string name="dbname_users">users</string>
+    <string name="dbname_user_shoppingList">user_shoppingList</string>
 
 </resources>

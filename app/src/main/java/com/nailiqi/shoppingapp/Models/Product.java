@@ -66,4 +66,8 @@ public class Product {
                 ", purchased=" + purchased +
                 '}';
     }
+
+    public String toStringForFile() {
+        return name + ", " + price + ", " + priority + ", " + qty + ", " + purchased;
+    }
 }

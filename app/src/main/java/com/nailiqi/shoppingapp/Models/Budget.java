@@ -1,6 +1,8 @@
 package com.nailiqi.shoppingapp.Models;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -27,6 +29,22 @@ public class Budget {
 
         List<Product> resultList = new ArrayList<>();
         for(List<Product> list : products.values()) {
+
+            //sort list by price in descending order. So amount of money left is minimized
+            Collections.sort(list, new Comparator<Product>() {
+                @Override
+                public int compare(Product o1, Product o2) {
+                    double diff = o1.getPrice() - o2.getPrice();
+                    if(diff > 0){
+                        return 1;
+                    }
+                    else if(diff < 0){
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
             for(Product product: list) {
                 double unitPrice = product.getPrice();
                 int qty = (int) (budget / unitPrice);
